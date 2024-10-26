@@ -50,7 +50,7 @@ def split_image_by_color_difference(image: Image.Image, count: int, threshold=20
             for pixel1, pixel2 in zip(prev_col, curr_col)
         ]
         if valid_diff := [x for x in differences if x > threshold]:
-            return sum(valid_diff) + (len(valid_diff) * height)
+            return sum(valid_diff)
         else:
             return 0
 
