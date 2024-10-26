@@ -21,7 +21,7 @@ def crop(
         output_path: Annotated[Path | None, Argument(help='Output image file, omit will output with suffix .cropped.')] = None,
         pick: Annotated[int, Option(help='Which part to save (start by 0)')] = 0,
         take_all: Annotated[bool, Option('-a', '--all', help='Take all parts')] = False,
-        min_width: Annotated[int, Option(help='Minimum image width')] = 4,
+        min_width: Annotated[int, Option(help='Minimum image width')] = 50,
     ):
 
     if output_path is None:
