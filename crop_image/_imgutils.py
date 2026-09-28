@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2024~2999 - Cologler <skyoflw@gmail.com>
 # ----------
@@ -14,7 +13,7 @@ def trim_white_border(image: Image.Image) -> Image.Image:
     width, height = image.size
     left, right, top, bottom = width, 0, height, 0
 
-    def is_near_white(pixel, tolerance):
+    def is_near_white(pixel: tuple[int, int, int, int], tolerance: int) -> bool:
         return all(channel >= 255 - tolerance for channel in pixel[:3])
 
     # walk through each pixel and see if it's white
@@ -22,14 +21,10 @@ def trim_white_border(image: Image.Image) -> Image.Image:
     for y in range(height):
         for x in range(width):
             if not is_near_white(pixel_data[x, y], 20):
-                if x < left:
-                    left = x
-                if x > right:
-                    right = x
-                if y < top:
-                    top = y
-                if y > bottom:
-                    bottom = y
+                left = min(left, x)
+                right = max(right, x)
+                top = min(top, y)
+                bottom = max(bottom, y)
 
     if (left, top, right + 1, bottom + 1) == (0, 0, width, height):
         # nothing to trim
@@ -39,10 +34,10 @@ def trim_white_border(image: Image.Image) -> Image.Image:
     return cropped_image
 
 
-def split_image_by_color_difference(image: Image.Image, count: int, threshold=20, min_width=4) -> list[Image.Image]:
+def split_image_by_color_difference(image: Image.Image, count: int, threshold: int = 20, min_width: int = 4) -> list[Image.Image]:
     pixels = image.load()
 
-    def compute_boundary_rank(x):
+    def compute_boundary_rank(x: int) -> int:
         prev_col = [pixels[x-1, y] for y in range(height)]
         curr_col = [pixels[x, y] for y in range(height)]
         differences = [
@@ -57,7 +52,8 @@ def split_image_by_color_difference(image: Image.Image, count: int, threshold=20
     width, height = image.size
     boundaries = [0]
     boundaries.append(width)
-    for x in reversed(sorted(range(1, width), key=compute_boundary_rank)):
+    # Keep higher x values first when boundary scores tie.
+    for x in sorted(range(1, width), key=lambda x: (compute_boundary_rank(x), x), reverse=True):
         if any(abs(x - b) < min_width for b in boundaries):
             continue
         boundaries.append(x)

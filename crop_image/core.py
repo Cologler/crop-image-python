@@ -1,15 +1,14 @@
-# -*- coding: utf-8 -*-
 # 
 # Copyright (c) 2024~2999 - Cologler <skyoflw@gmail.com>
 # ----------
 # 
 # ----------
 
-from typing import Annotated
 from pathlib import Path
+from typing import Annotated
 
-from typer import Typer, Argument, Option
 from PIL import Image
+from typer import Argument, Option, Typer
 
 from ._imgutils import split_image_by_color_difference
 
@@ -22,7 +21,7 @@ def crop(
         pick: Annotated[int, Option(help='Which part to save (start by 0)')] = 0,
         take_all: Annotated[bool, Option('-a', '--all', help='Take all parts')] = False,
         min_width: Annotated[int, Option(help='Minimum image width')] = 50,
-    ):
+    ) -> None:
 
     if output_path is None:
         output_path = source_path.with_stem(f'{source_path.stem}.cropped')
